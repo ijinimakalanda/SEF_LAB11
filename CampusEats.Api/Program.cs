@@ -10,7 +10,10 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
+   builder.Services.AddCors(o => o.AddPolicy("Frontend", p => p
+       .AllowAnyOrigin() // We will restrict this later, but allow any for now to ensure it works
+       .AllowAnyHeader()
+       .AllowAnyMethod()));
 // 👇 Swagger registration with JWT Support
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => { 
@@ -84,7 +87,7 @@ app.UseSwaggerUI();
 // 👇 Authentication & Authorization middleware (MUST BE IN THIS EXACT ORDER)
 app.UseAuthentication();    // 1st: Validates JWT - "Who are you?"
 app.UseAuthorization();     // 2nd: Checks roles - "May you?"
-
+app.UseCors("Frontend");
 app.MapControllers();
 
 app.Run();
